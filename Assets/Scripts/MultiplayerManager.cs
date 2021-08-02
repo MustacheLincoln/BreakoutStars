@@ -37,7 +37,7 @@ public class MultiplayerManager : MonoBehaviour
     public void Join()
     {
         NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.ASCII.GetBytes(passwordInputField.text);
-
+        NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = IPInputField.text;
         NetworkManager.Singleton.StartClient();
     }
 
@@ -85,8 +85,6 @@ public class MultiplayerManager : MonoBehaviour
         string password = Encoding.ASCII.GetString(connectionData);
 
         bool approveConnection = password == passwordInputField.text;
-
-        NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = IPInputField.text;
 
         //Client Spawn Position
         Vector3 spawnPos = Vector3.zero;
