@@ -10,7 +10,7 @@ public class CamFocus : MonoBehaviour
     {
         if (!target)
         {
-            target = GameObject.FindWithTag("Player");
+            target = GameObject.Find("Player");
         }
         else
             transform.position = target.transform.position;
