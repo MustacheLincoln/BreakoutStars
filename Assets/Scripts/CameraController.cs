@@ -29,7 +29,12 @@ public class CameraController : MonoBehaviour
 
     private void CaptureMovement(InputAction.CallbackContext obj)
     {
-        moveInput = obj.ReadValue<Vector2>();
+        var mouse = Mouse.current;
+        if (mouse == null)
+            return;
+        if (mouse.middleButton.isPressed || obj.control.displayName != "Delta")
+            moveInput = obj.ReadValue<Vector2>();
+        moveInput = Vector2.ClampMagnitude(moveInput, 5);
     }
 
     private void LateUpdate()
@@ -40,5 +45,6 @@ public class CameraController : MonoBehaviour
         float tilt = camZoom * 2;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(tilt, camHeading, 0), Time.deltaTime * 10);
         transform.position = Vector3.Lerp(transform.position, camFocus.position - transform.forward * camZoom + Vector3.up, Time.deltaTime * 10);
+        moveInput = Vector2.Lerp(moveInput, Vector2.zero, Time.deltaTime * 10);
     }
 }

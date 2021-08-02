@@ -260,6 +260,14 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Press to Spin"",
+                    ""type"": ""Button"",
+                    ""id"": ""5dcf9965-3b48-420a-8879-4a6fc9071cea"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -279,7 +287,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""id"": ""4660af69-34bd-4dfd-a214-d7734e40a9fa"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""InvertVector2(invertX=false)"",
                     ""groups"": """",
                     ""action"": ""Camera Movement"",
                     ""isComposite"": true,
@@ -328,6 +336,39 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""action"": ""Camera Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""55c927d7-b92a-41ef-85a5-1b4e84249ae6"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""InvertVector2,ScaleVector2(x=0,y=0.1)"",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f32bd7c0-ffee-41f7-aac9-93bf7671581b"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=0.2,y=0)"",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Camera Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""49bf3e56-d6ef-4e71-8db2-9f541b0decb3"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Press to Spin"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -372,6 +413,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_CameraMovement = m_Camera.FindAction("Camera Movement", throwIfNotFound: true);
+        m_Camera_PresstoSpin = m_Camera.FindAction("Press to Spin", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -487,11 +529,13 @@ public class @InputMaster : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Camera;
     private ICameraActions m_CameraActionsCallbackInterface;
     private readonly InputAction m_Camera_CameraMovement;
+    private readonly InputAction m_Camera_PresstoSpin;
     public struct CameraActions
     {
         private @InputMaster m_Wrapper;
         public CameraActions(@InputMaster wrapper) { m_Wrapper = wrapper; }
         public InputAction @CameraMovement => m_Wrapper.m_Camera_CameraMovement;
+        public InputAction @PresstoSpin => m_Wrapper.m_Camera_PresstoSpin;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -504,6 +548,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @CameraMovement.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnCameraMovement;
                 @CameraMovement.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnCameraMovement;
                 @CameraMovement.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnCameraMovement;
+                @PresstoSpin.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnPresstoSpin;
+                @PresstoSpin.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnPresstoSpin;
+                @PresstoSpin.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnPresstoSpin;
             }
             m_Wrapper.m_CameraActionsCallbackInterface = instance;
             if (instance != null)
@@ -511,6 +558,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @CameraMovement.started += instance.OnCameraMovement;
                 @CameraMovement.performed += instance.OnCameraMovement;
                 @CameraMovement.canceled += instance.OnCameraMovement;
+                @PresstoSpin.started += instance.OnPresstoSpin;
+                @PresstoSpin.performed += instance.OnPresstoSpin;
+                @PresstoSpin.canceled += instance.OnPresstoSpin;
             }
         }
     }
@@ -544,5 +594,6 @@ public class @InputMaster : IInputActionCollection, IDisposable
     public interface ICameraActions
     {
         void OnCameraMovement(InputAction.CallbackContext context);
+        void OnPresstoSpin(InputAction.CallbackContext context);
     }
 }
