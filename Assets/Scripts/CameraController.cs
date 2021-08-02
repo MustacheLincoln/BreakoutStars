@@ -35,6 +35,10 @@ public class CameraController : MonoBehaviour
         if (mouse.middleButton.isPressed || obj.control.displayName != "Delta")
             moveInput = obj.ReadValue<Vector2>();
         moveInput = Vector2.ClampMagnitude(moveInput, 5);
+
+        //Prevent getting stuck spinning
+        if (obj.ReadValue<Vector2>() == Vector2.zero)
+            moveInput = Vector2.zero;
     }
 
     private void LateUpdate()
@@ -45,6 +49,6 @@ public class CameraController : MonoBehaviour
         float tilt = camZoom * 2;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(tilt, camHeading, 0), Time.deltaTime * 10);
         transform.position = Vector3.Lerp(transform.position, camFocus.position - transform.forward * camZoom + Vector3.up, Time.deltaTime * 10);
-        moveInput = Vector2.Lerp(moveInput, Vector2.zero, Time.deltaTime * 10);
+        //moveInput = Vector2.Lerp(moveInput, Vector2.zero, Time.deltaTime * 10);
     }
 }

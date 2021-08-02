@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private Transform cam;
     private Player player;
+    private Transform camTransform;    
     private InputMaster inputMaster;
     private CharacterController mover;
 
@@ -34,6 +34,7 @@ public class Movement : MonoBehaviour
     {
         player = GetComponent<Player>();
         mover = GetComponent<CharacterController>();
+        camTransform = Camera.main.transform;
         inputMaster = new InputMaster();
     }
 
@@ -116,8 +117,8 @@ public class Movement : MonoBehaviour
 
     private void CalculateCam()
     {
-        camF = cam.forward;
-        camR = cam.right;
+        camF = camTransform.forward;
+        camR = camTransform.right;
         camF.y = 0;
         camR.y = 0;
         camF = camF.normalized;
