@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
 
-public class CamFocus : MonoBehaviour
+public class CamFocus : NetworkBehaviour
 {
     private GameObject target;
 
@@ -10,7 +11,10 @@ public class CamFocus : MonoBehaviour
     {
         if (!target)
         {
-            target = GameObject.Find("Player");
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject player in players)
+                if (player.GetComponent<NetworkObject>().IsOwner)
+                    target = player;
         }
         else
             transform.position = target.transform.position;

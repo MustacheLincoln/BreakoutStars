@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MLAPI;
 
-public class Movement : MonoBehaviour
+public class Movement : NetworkBehaviour
 {
     private Player player;
     private Transform camTransform;    
@@ -78,12 +79,15 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
-        CalculateMovement();
-        CalculateCam();
-        DetectGround();
-        CalculateGravity();
-        DoMove();
-        player.RegenEnergy(mover.velocity.magnitude);
+        if (IsOwner)
+        {
+            CalculateMovement();
+            CalculateCam();
+            DetectGround();
+            CalculateGravity();
+            DoMove();
+            player.RegenEnergy(mover.velocity.magnitude);
+        }
     }
 
     private void CalculateMovement()

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private Renderer pants;
+    private ParticleSpawner particleSpawner;
 
     [Range(0, 100)] public float energy = 100;
     private float energyRegen = 2.5f;
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         pants.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        particleSpawner = GetComponent<ParticleSpawner>();
     }
 
     private void LateUpdate()
@@ -23,6 +25,7 @@ public class Player : MonoBehaviour
     internal void Dash(int cost)
     {
         energy = energy - cost;
+        particleSpawner.Dash();
     }
 
     internal void Jump(int cost)
