@@ -8,6 +8,8 @@ using MLAPI.NetworkVariable;
 public class Player : NetworkBehaviour
 {
     [SerializeField] private Renderer pants;
+    [SerializeField] private GameObject mesh;
+    private Movement movement;
     private ParticleSpawner particleSpawner;
 
     [Range(0, 100)] public float health = 100;
@@ -15,6 +17,7 @@ public class Player : NetworkBehaviour
     private float energyRegen = 2.5f;
 
     private NetworkVariableColor playerColor = new NetworkVariableColor();
+    private NetworkVariableFloat playerHealth = new NetworkVariableFloat(100);
 
 
     private void Start()
@@ -24,23 +27,28 @@ public class Player : NetworkBehaviour
             pants.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
             SetPlayerColorServerRpc(pants.material.color);
         }
+        movement = GetComponent<Movement>();
         particleSpawner = GetComponent<ParticleSpawner>();
     }
 
-    [ServerRpc]
-    public void SetPlayerColorServerRpc(Color color)
-    {
-        playerColor.Value = color;
-    }
 
     private void OnEnable()
     {
         playerColor.OnValueChanged += OnColorChanged;
+        playerHealth.OnValueChanged += OnHealthChanged;
     }
+
+
 
     private void OnDisable()
     {
         playerColor.OnValueChanged -= OnColorChanged;
+        playerHealth.OnValueChanged -= OnHealthChanged;
+    }
+
+    private void OnHealthChanged(float previousValue, float newValue)
+    {
+        health = newValue;
     }
 
     private void OnColorChanged(Color previousValue, Color newValue)
@@ -80,11 +88,38 @@ public class Player : NetworkBehaviour
     void KO()
     {
         //TEMP Do this with Animator
-        transform.rotation = Quaternion.Euler(-90, transform.rotation.y, transform.rotation.z);
+        mesh.transform.localPosition = new Vector3(0, 0.5f, 0.5f);
+        mesh.transform.localRotation = Quaternion.Euler(-90, 0, 0);
     }
 
-    internal void TakeDamage(float damage)
+    internal void TakeDamage(float damage, Vector3 direction)
     {
         health -= damage;
+        SetPlayerHealthServerRpc(health);
+        KnockbackServerRpc(damage, direction);
+    }
+
+    [ServerRpc]
+    public void SetPlayerColorServerRpc(Color color)
+    {
+        playerColor.Value = color;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerHealthServerRpc(float health)
+    {
+        playerHealth.Value = health;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void KnockbackServerRpc(float damage, Vector3 direction)
+    {
+        KnockbackClientRpc(damage, direction);
+    }
+
+    [ClientRpc]
+    private void KnockbackClientRpc(float damage, Vector3 direction)
+    {
+        movement.Knockback(damage, direction);
     }
 }

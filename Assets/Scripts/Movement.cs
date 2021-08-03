@@ -59,18 +59,15 @@ public class Movement : NetworkBehaviour
 
     private void Update()
     {
-        if (IsOwner)
-        {
-            player.RegenEnergy(mover.velocity.magnitude);
-            if (player.health > 0)
-                CalculateMovement();
-            CalculateCam();
-            DetectGround();
-            CalculateGravity();
-            DoMove();
-        }
-        else
+        if (!IsOwner)
             this.enabled = false;
+
+        player.RegenEnergy(mover.velocity.magnitude);
+        CalculateMovement();
+        CalculateCam();
+        DetectGround();
+        CalculateGravity();
+        DoMove();
     }
 
     private void Dash(InputAction.CallbackContext obj)
@@ -95,7 +92,8 @@ public class Movement : NetworkBehaviour
 
     private void CalculateMovement()
     {
-        input = Vector2.ClampMagnitude(input, 1);
+        if (player.health > 0)
+            input = Vector2.ClampMagnitude(input, 1);
         intent = camF * input.y + camR * input.x;
 
         if (input.magnitude > 0)
@@ -160,10 +158,7 @@ public class Movement : NetworkBehaviour
         }
     }
     
-    private void DoMove()
-    {
-        mover.Move(velocity * Time.deltaTime);
-    }
+
 
     private void Jump(InputAction.CallbackContext obj)
     {
@@ -175,4 +170,13 @@ public class Movement : NetworkBehaviour
         }
     }
 
+    internal void Knockback(float damage, Vector3 direction)
+    {
+        velocity = damage * -direction;
+    }
+    
+    private void DoMove()
+    {
+        mover.Move(velocity * Time.deltaTime);
+    }
 }
