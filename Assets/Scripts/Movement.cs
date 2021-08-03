@@ -69,6 +69,8 @@ public class Movement : NetworkBehaviour
             CalculateGravity();
             DoMove();
         }
+        else
+            this.enabled = false;
     }
 
     private void Dash(InputAction.CallbackContext obj)

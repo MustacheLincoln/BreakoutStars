@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Messaging;
+using MLAPI.NetworkVariable;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
     [SerializeField] private Renderer pants;
     private ParticleSpawner particleSpawner;
@@ -11,11 +14,39 @@ public class Player : MonoBehaviour
     [Range(0, 100)] public float energy = 100;
     private float energyRegen = 2.5f;
 
+    private NetworkVariableColor playerColor = new NetworkVariableColor();
+
 
     private void Start()
     {
-        pants.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        if (IsOwner)
+        {
+            pants.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+            SetPlayerColorServerRpc(pants.material.color);
+        }
         particleSpawner = GetComponent<ParticleSpawner>();
+    }
+
+    [ServerRpc]
+    public void SetPlayerColorServerRpc(Color color)
+    {
+        playerColor.Value = color;
+    }
+
+    private void OnEnable()
+    {
+        playerColor.OnValueChanged += OnColorChanged;
+    }
+
+    private void OnDisable()
+    {
+        playerColor.OnValueChanged -= OnColorChanged;
+    }
+
+    private void OnColorChanged(Color previousValue, Color newValue)
+    {
+        if (IsClient)
+            pants.material.color = newValue;
     }
 
     private void LateUpdate()
