@@ -6,27 +6,33 @@ using MLAPI.Messaging;
 
 public class ParticleSpawner : NetworkBehaviour
 {
-    [SerializeField] private GameObject dash;
+    public GameObject dash;
+    public GameObject jump;
 
-    public void Dash()
+    public void Emit(GameObject type)
     {
         if (IsOwner)
         {
-            Instantiate(dash, transform.position, transform.rotation);
-            SpawnParticleServerRpc();
+            Instantiate(type, transform.position, transform.rotation);
+            SpawnParticleServerRpc(type.name);
         }
     }
 
     [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-    private void SpawnParticleServerRpc()
+    private void SpawnParticleServerRpc(string name)
     {
-        SpawnParticleClientRpc();
+        SpawnParticleClientRpc(name);
     }
 
     [ClientRpc(Delivery = RpcDelivery.Unreliable)]
-    private void SpawnParticleClientRpc()
+    private void SpawnParticleClientRpc(string name)
     {
-        if(!IsOwner)
-            Instantiate(dash, transform.position, transform.rotation);
+        if (!IsOwner)
+        {
+            if (name == dash.name)
+                Instantiate(dash, transform.position, transform.rotation);
+            if (name == jump.name)
+                Instantiate(jump, transform.position, transform.rotation);
+        }
     }
 }

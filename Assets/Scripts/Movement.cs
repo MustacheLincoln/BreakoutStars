@@ -57,6 +57,20 @@ public class Movement : NetworkBehaviour
         inputMaster.Player.DigitalMovement.performed += CaptureMovement;
     }
 
+    private void Update()
+    {
+        if (IsOwner)
+        {
+            player.RegenEnergy(mover.velocity.magnitude);
+            if (player.health > 0)
+                CalculateMovement();
+            CalculateCam();
+            DetectGround();
+            CalculateGravity();
+            DoMove();
+        }
+    }
+
     private void Dash(InputAction.CallbackContext obj)
     {
         int cost = 10;
@@ -75,19 +89,6 @@ public class Movement : NetworkBehaviour
     private void CaptureMovement(InputAction.CallbackContext obj)
     {
         input = obj.ReadValue<Vector2>();
-    }
-
-    private void Update()
-    {
-        if (IsOwner)
-        {
-            CalculateMovement();
-            CalculateCam();
-            DetectGround();
-            CalculateGravity();
-            DoMove();
-            player.RegenEnergy(mover.velocity.magnitude);
-        }
     }
 
     private void CalculateMovement()
@@ -148,7 +149,7 @@ public class Movement : NetworkBehaviour
             velocity.y = Mathf.Clamp(velocity.y, -10, 50);
         velocity.y = Mathf.Clamp(velocity.y, -50, 50);
         //Temporary Respawn
-        if (velocity.y == -50)
+        if (transform.position.y <= -50)
         {
             velocity.y = -10;
             mover.enabled = false;

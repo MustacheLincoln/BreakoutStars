@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2325943006158162450}
   - component: {fileID: 4640454472638686656}
   - component: {fileID: -71826086826301550}
+  - component: {fileID: -8041419007573012948}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -83,6 +84,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pants: {fileID: 5701568631717349679}
+  health: 100
   energy: 100
 --- !u!114 &2325943006158162450
 MonoBehaviour:
@@ -162,6 +164,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dash: {fileID: 2897193551122168584, guid: 46de04932af26424da3bf0b76c3965f0, type: 3}
+  jump: {fileID: 2897193551122168584, guid: 4ce4b07f5af1c5c4d8fad2d6f9437254, type: 3}
+--- !u!114 &-8041419007573012948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5701568630232133576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a466d0d20a69c94a9eaa2c425c129ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5701568630986574700
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +284,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5701568631717349677}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.49, z: 0}
   m_LocalScale: {x: 1.1, y: 1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 5701568630232133577}
