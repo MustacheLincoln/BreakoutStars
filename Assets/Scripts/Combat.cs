@@ -26,8 +26,9 @@ public class Combat : MonoBehaviour
         int i = 0;
         while (i < hitColliders.Length)
         {
-            if (hitColliders[i].GetComponent<NetworkObject>().IsOwner == false && hitColliders[i].CompareTag("Player"))
-                hitColliders[i].GetComponent<Player>().TakeDamage(baseDamage);
+            if (hitColliders[i].CompareTag("Player"))
+                if (hitColliders[i].GetComponent<NetworkObject>().IsOwner == false)
+                    hitColliders[i].GetComponent<Player>().TakeDamage(baseDamage);
 
             i++;
         }
