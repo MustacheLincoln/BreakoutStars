@@ -7,8 +7,8 @@ using MLAPI;
 
 public class Movement : NetworkBehaviour
 {
-    private Player player;
-    private Transform camTransform;    
+    private Character character;
+    private Transform camTransform;
     private InputMaster inputMaster;
     private CharacterController mover;
 
@@ -33,7 +33,7 @@ public class Movement : NetworkBehaviour
 
     private void Awake()
     {
-        player = GetComponent<Player>();
+        character = GetComponent<Character>();
         mover = GetComponent<CharacterController>();
         camTransform = Camera.main.transform;
         inputMaster = new InputMaster();
@@ -62,7 +62,7 @@ public class Movement : NetworkBehaviour
         if (!IsOwner)
             this.enabled = false;
 
-        player.RegenEnergy(mover.velocity.magnitude);
+        character.RegenEnergy(mover.velocity.magnitude);
         CalculateMovement();
         CalculateCam();
         DetectGround();
@@ -73,10 +73,10 @@ public class Movement : NetworkBehaviour
     private void Dash(InputAction.CallbackContext obj)
     {
         int cost = 10;
-        if (player.energy >= cost)
+        if (character.energy >= cost)
         {
             velocity = dashSpeed * transform.forward;
-            player.Dash(cost);
+            character.Dash(cost);
         }
     }
 
@@ -92,7 +92,7 @@ public class Movement : NetworkBehaviour
 
     private void CalculateMovement()
     {
-        if (player.health > 0)
+        if (character.health > 0)
             input = Vector2.ClampMagnitude(input, 1);
         intent = camF * input.y + camR * input.x;
 
@@ -157,16 +157,14 @@ public class Movement : NetworkBehaviour
             mover.enabled = true;
         }
     }
-    
-
 
     private void Jump(InputAction.CallbackContext obj)
     {
         int cost = 10;
-        if (player.energy >= cost && grounded)
+        if (character.energy >= cost && grounded)
         {
             velocity.y = jumpSpeed;
-            player.Jump(cost);
+            character.Jump(cost);
         }
     }
 
@@ -174,7 +172,7 @@ public class Movement : NetworkBehaviour
     {
         velocity = damage * -direction;
     }
-    
+
     private void DoMove()
     {
         mover.Move(velocity * Time.deltaTime);

@@ -7,7 +7,7 @@ using MLAPI;
 
 public class Combat : NetworkBehaviour
 {
-    private Player player;
+    private Character character;
     private InputMaster inputMaster;
     private bool charging;
 
@@ -18,7 +18,7 @@ public class Combat : NetworkBehaviour
 
     private void OnEnable()
     {
-        player = GetComponent<Player>();
+        character = GetComponent<Character>();
         inputMaster = new InputMaster();
         inputMaster.Player.Attack.Enable();
         inputMaster.Player.Attack.started += Charge;
@@ -51,23 +51,23 @@ public class Combat : NetworkBehaviour
 
     private void Attack(InputAction.CallbackContext obj)
     {
-        if (player.health > 0)
+        if (character.health > 0)
         {
-            Collider[] hitColliders = Physics.OverlapBox(gameObject.transform.position + transform.forward + transform.up, transform.localScale / 2, Quaternion.identity);
+            Collider[] hitColliders = Physics.OverlapBox(gameObject.transform.position + transform.forward + transform.up, transform.localScale / 1.25f, transform.rotation);
             int i = 0;
             while (i < hitColliders.Length)
             {
-                if (hitColliders[i].CompareTag("Player"))
+                if (hitColliders[i].GetComponent<Character>())
                     if (hitColliders[i].GetComponent<NetworkObject>().IsOwner == false)
                     {
                         Vector3 direction = (transform.position - hitColliders[i].transform.position).normalized;
-                        hitColliders[i].GetComponent<Player>().TakeDamage(damage, direction);
+                        hitColliders[i].GetComponent<Character>().TakeDamage(damage, direction);
                     }
-
                 i++;
             }
             charging = false;
             damage = baseDamage;
+            character.PlayAnimation("Swoosh");
         }
 
     }
