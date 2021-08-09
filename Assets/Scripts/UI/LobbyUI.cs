@@ -1,5 +1,6 @@
 using MLAPI;
 using MLAPI.Connection;
+using MLAPI.Messaging;
 using MLAPI.NetworkVariable.Collections;
 using System;
 using UnityEngine;
@@ -62,17 +63,94 @@ namespace BreakoutStars
 
         private void HandleClientConnected(ulong clientId)
         {
-            throw new NotImplementedException();
+            var playerData = ServerGameNetPortal.Instance.GetPlayerData(clientId);
+
+            if (playerData.HasValue)
+            {
+                lobbyPlayers.Add(new LobbyPlayerState(
+                    clientId,
+                    playerData.Value.PlayerName,
+                    false
+                    ));
+            }
+
         }
 
         private void HandleClientDisconnect(ulong clientId)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < lobbyPlayers.Count; i++)
+            {
+                if(lobbyPlayers[i].ClientId == clientId)
+                {
+                    lobbyPlayers.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
-        private void HandleLobbyPlayersStateChanged(NetworkListEvent<LobbyPlayerState> changeEvent)
+        [ServerRpc(RequireOwnership = false)]
+        private void ToggleReadyServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < lobbyPlayers.Count; i++)
+            {
+                if(lobbyPlayers[i].ClientId == serverRpcParams.Receive.SenderClientId)
+                {
+                    lobbyPlayers[i] = new LobbyPlayerState(
+                        lobbyPlayers[i].ClientId,
+                        lobbyPlayers[i].PlayerName,
+                        !lobbyPlayers[i].IsReady
+                        );
+                }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void StartGameServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            if (serverRpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                if (IsEveryoneReady())
+                {
+                    ServerGameNetPortal.Instance.StartGame();
+                }
+            }
+
+
+        }
+
+        public void OnLeaveClicked()
+        {
+            GameNetPortal.Instance.RequestDisconnect();
+        }
+
+        public void OnReadyClicked()
+        {
+            ToggleReadyServerRpc();
+        }
+
+        public void OnStartGameClicked()
+        {
+            StartGameServerRpc();
+        }
+
+        private void HandleLobbyPlayersStateChanged(NetworkListEvent<LobbyPlayerState> lobbyState)
+        {
+            for (int i = 0; i < lobbyPlayerCards.Length; i++)
+            {
+                if(lobbyPlayers.Count > i)
+                {
+                    lobbyPlayerCards[i].UpdateDisplay(lobbyPlayers[i]);
+                }
+                else
+                {
+                    lobbyPlayerCards[i].DisableDisplay();
+                }
+            }
+
+            if (IsHost)
+            {
+                startGameButton.interactable = IsEveryoneReady();
+            }
         }
     }
 

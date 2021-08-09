@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using MLAPI;
+using MLAPI.Transports.UNET;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -61,13 +62,14 @@ namespace BreakoutStars
             {
                 clientGUID = Guid.NewGuid().ToString(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
-                playerName = PlayerPrefs.GetString("PlayerName", "Missing Name")
+                playerName = PlayerPrefs.GetString("PlayerName", "Player")
             });
 
             byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);
 
             NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
 
+            NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = PlayerPrefs.GetString("IP", "70.112.175.40");
             NetworkManager.Singleton.StartClient();
         }
 

@@ -158,7 +158,7 @@ namespace BreakoutStars
             if (!NetworkManager.Singleton.IsHost) { return; }
 
             string clientGuid = Guid.NewGuid().ToString();
-            string playerName = PlayerPrefs.GetString("PlayerName", "Missing Name");
+            string playerName = PlayerPrefs.GetString("PlayerName", "Player");
 
             clientData.Add(clientGuid, new PlayerData(playerName, NetworkManager.Singleton.LocalClientId));
             clientIdToGuid.Add(NetworkManager.Singleton.LocalClientId, clientGuid);
