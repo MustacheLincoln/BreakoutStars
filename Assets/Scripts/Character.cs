@@ -11,7 +11,6 @@ namespace BreakoutStars
     {
         [SerializeField] private Renderer pants;
         [SerializeField] private GameObject mesh;
-        [SerializeField] private GameObject multiplayerManager;
         public Animation anim;
         public Movement movement;
         public ParticleSpawner particleSpawner;
@@ -23,19 +22,6 @@ namespace BreakoutStars
         private NetworkVariableString playerName = new NetworkVariableString("Player");
         private NetworkVariableColor playerColor = new NetworkVariableColor();
         private NetworkVariableFloat playerHealth = new NetworkVariableFloat(100);
-
-        public override void NetworkStart()
-        {
-            if (IsServer)
-            {
-                PlayerData? playerData = MultiplayerManager.GetPlayerData(OwnerClientId);
-
-                if (playerData.HasValue)
-                {
-                    playerName.Value = playerData.Value.PlayerName;
-                }
-            }
-        }
 
         private void Start()
         {

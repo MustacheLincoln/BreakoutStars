@@ -6,7 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/Menu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 2d312a25e94961541bbaed1407d77c86
+  - enabled: 1
+    path: Assets/Scenes/Prison.unity
+    guid: 15c14e61a6fbf7d4486561816da49763
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 4a6535c2450c2e142b95419495021148, type: 2}
