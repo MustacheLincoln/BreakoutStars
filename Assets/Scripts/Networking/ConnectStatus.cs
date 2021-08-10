@@ -5,10 +5,9 @@ namespace BreakoutStars
         Undefined,
         Success,
         ServerFull,
-        GameInProgress,
+        IncorrectPassword,
         LoggedInAgain,
         UserRequestedDisconnect,
-        GenericDisconnect,
-        IncorrectPassword
+        GenericDisconnect
     }
 }

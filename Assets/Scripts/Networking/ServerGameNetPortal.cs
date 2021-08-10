@@ -21,7 +21,6 @@ namespace BreakoutStars
         private Dictionary<string, PlayerData> clientData;
         private Dictionary<ulong, string> clientIdToGuid;
         private Dictionary<ulong, int> clientSceneMap;
-        private bool gameInProgress;
 
         private const int MaxConnectionPayload = 1024;
 
@@ -87,15 +86,11 @@ namespace BreakoutStars
 
         public void StartGame()
         {
-            gameInProgress = true;
-
             NetworkSceneManager.SwitchScene("Prison");
         }
 
-        public void EndRound()
+        public void EndGame()
         {
-            gameInProgress = false;
-
             NetworkSceneManager.SwitchScene("Lobby");
         }
 
@@ -169,8 +164,6 @@ namespace BreakoutStars
             clientData.Clear();
             clientIdToGuid.Clear();
             clientSceneMap.Clear();
-
-            gameInProgress = false;
         }
 
         private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
@@ -195,9 +188,9 @@ namespace BreakoutStars
             //     StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
             // }
 
-            if (gameInProgress)
+            if (connectionPayload.password != PlayerPrefs.GetString("Password"))
             {
-                gameReturnStatus = ConnectStatus.GameInProgress;
+                gameReturnStatus = ConnectStatus.IncorrectPassword;
             }
             else if (clientData.Count >= maxPlayers)
             {
@@ -226,7 +219,6 @@ namespace BreakoutStars
             gameNetPortal.ServerToClientSetDisconnectReason(clientId, reason);
 
             yield return new WaitForSeconds(0);
-
             KickClient(clientId);
         }
 
